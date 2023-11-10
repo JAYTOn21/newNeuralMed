@@ -1,6 +1,7 @@
 import math
-
+import pandas as pd
 import numpy as np
+import time
 
 
 class Network:
@@ -14,6 +15,7 @@ class Network:
 
     def __init__(self, sizes):
         self.layersN = len(sizes) - 1  # запоминаем число слоёв
+        self.errDF = pd.DataFrame()
 
         for i in range(1, len(sizes)):
             self.weights.append(np.random.rand(sizes[i], sizes[i - 1]))  # создаём матрицу весовых коэффициентов
@@ -88,7 +90,7 @@ class Network:
             error = self.backward(Y[i])
             self.updateWeights(alpha)
 
-        print(f"epoch: {epoch} error: {error}")
+        self.errDF = self.errDF._append({'epoch': epoch, 'error': error}, ignore_index=True)
 
         epoch += 1
 
@@ -100,55 +102,67 @@ class Network:
                 error = self.backward(Y[i])
                 self.updateWeights(alpha)
 
-            print(f"epoch: {epoch} error: {error}")
+            self.errDF = self.errDF._append({'epoch': epoch, 'error': error}, ignore_index=True)
 
             epoch += 1
 
 
-uos = [68.978, 44.45, 48.7572, 85.8212, 27.8308, 81.9672]
-kv = [8.13953, 14.4, 45, 18.75, 18.42105, 28.66667]
-upss = [1018.12, 1630.77, 1130.442, 744.1041, 1952.095, 639.5673]
-ilg = [1.56627, 4.03226, 4.03664, 7.076745, 7.519231, 4.483247]
-islm = [4.33333, 4.16667, 2.45283, 2.65942, 4.546512, 3.031915]
-isnm = [27.667, 10.3333, 5.981132, 3.586957, 5.930233, 6.510638]
-liir = [5.1875, 2.0, 1.685722, 0.936436, 1.047228, 1.519742]
-Y = [[1.0], [1.0], [0.0], [0.0]]
+def reading():
+    df = pd.read_excel('dataneed.xlsx', dtype=float).round(5)
 
-temp = []
-X = []
+    temp = []
+    resX = []
+    resY = []
+    X = []
+    Y = []
 
-y_arr = []
-
-vals = [uos, kv, upss, ilg, islm, isnm, liir]
-
-for i in range(7):
-    for j in range(6):
-        y_arr.append((vals[i][j] - min(vals[i])) / (max(vals[i]) - min(vals[i])))
-    vals[i] = y_arr
     y_arr = []
 
-for i in range(6):
-    for j in range(7):
-        temp.append(vals[j][i])
-    X.append(temp)
-    temp = []
+    vals = [df['uos'].tolist(), df['kv'].tolist(), df['upss'].tolist(), df['ilg'].tolist(), df['islm'].tolist(),
+            df['isnm'].tolist(), df['liir'].tolist()]
+
+    for i in range(7):
+        for j in range(len(df['uos'].tolist())):
+            y_arr.append((vals[i][j] - min(vals[i])) / (max(vals[i]) - min(vals[i])))
+        vals[i] = y_arr
+        y_arr = []
+
+    for i in range(len(df['uos'].tolist())):
+        for j in range(7):
+            temp.append(vals[j][i])
+        resX.append(temp)
+        temp = []
+
+    for i in range(len(df['res'].tolist())):
+        if df['res'].tolist()[i] == 3.0:
+            resY.append([1.0])
+        else:
+            resY.append([0.0])
+
+    for i in range(136):
+        X.append(resX[i])
+        Y.append(resY[i])
+
+    return X, Y
 
 
-testX = [X[4], X[5]]
-X = [X[0], X[1], X[2], X[3]]
+net = Network([7, 7, 7, 1])
+X, Y = reading()
 
 
-def run():
-    net = Network([7, 7, 1])
-
-    net.Train(X, Y, 0.5, 0.000001, 10000)
-
-    testY = [[1.0],
-             [0.0]]
-
-    for i in range(2):
-        output = net.feedForward(testX[i])
-        print(f"X: {testX[i][0]}, Y: {testY[i][0]}, output: {output[0]}")
+def train():
+    timing = time.time()
+    net.Train(X, Y, 0.5, 0.000000001, 10000)
+    return (time.time() - timing).__round__(3)
 
 
-run()
+def result():
+    return net.errDF
+
+
+def run(num):
+    output = net.feedForward(X[num])
+    if (output[0] * 100).round(2) >= 90.0:
+        return 1
+    else:
+        return 0
