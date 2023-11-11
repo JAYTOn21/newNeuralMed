@@ -139,20 +139,19 @@ def reading():
         else:
             resY.append([0.0])
 
-    for i in range(136):
+    for i in range(len(resX) - 3):
         X.append(resX[i])
         Y.append(resY[i])
-
-    return X, Y
+    return X, Y, resX
 
 
 net = Network([7, 7, 7, 1])
-X, Y = reading()
+X, Y, resX = reading()
 
 
 def train():
     timing = time.time()
-    net.Train(X, Y, 0.5, 0.000000001, 10000)
+    net.Train(X, Y, 0.5, 0.000000001, 1000)
     return (time.time() - timing).__round__(3)
 
 
@@ -161,8 +160,16 @@ def result():
 
 
 def run(num):
-    output = net.feedForward(X[num])
+    output = net.feedForward(resX[num])
     if (output[0] * 100).round(2) >= 90.0:
-        return 1
+        return 1, (output[0] * 100).round(2)
     else:
-        return 0
+        return 0, (output[0] * 100).round(2)
+
+
+def runHand(inpX):
+    output = net.feedForward(inpX)
+    if (output[0] * 100).round(2) >= 90.0:
+        return 1, (output[0] * 100).round(2)
+    else:
+        return 0, (output[0] * 100).round(2)

@@ -19,6 +19,7 @@ class MainWindow:
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self.main_win)
         self.ui.lineEdit_4.textChanged.connect(self.ui.loadData)
+        # self.ui.but.clicked.connect(self.ui.loadDataHand)
 
     def graphSet(self):
         self.ui.graphSet()

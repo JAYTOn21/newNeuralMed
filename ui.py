@@ -1,8 +1,13 @@
+import plotly.express as px
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWebEngineWidgets import QWebEngineView
-import main
-import plotly.express as px
+import pandas as pd
 
+import main
+
+df = pd.read_excel('dataneed.xlsx', dtype=float).round(5)
+vals = [df['uos'].tolist(), df['kv'].tolist(), df['upss'].tolist(), df['ilg'].tolist(), df['islm'].tolist(),
+        df['isnm'].tolist(), df['liir'].tolist()]
 
 class Ui_MainWindow(object):
     def trainTime(self, num):
@@ -19,11 +24,51 @@ class Ui_MainWindow(object):
         fig.update_layout(margin=dict(l=20, r=20, t=20, b=20))
         self.graphicsView.setHtml(fig.to_html(include_plotlyjs='cdn'))
 
+    def loadDataHand(self):
+        df = pd.read_excel('dataneed.xlsx', dtype=float).round(5)
+        vals = [df['uos'].tolist(), df['kv'].tolist(), df['upss'].tolist(), df['ilg'].tolist(), df['islm'].tolist(),
+                df['isnm'].tolist(), df['liir'].tolist()]
+        data = []
+        try:
+            data = [float(self.lineEdit.text()), float(self.lineEdit_2.text()), float(self.lineEdit_3.text()),
+                    float(self.lineEdit_5.text()), float(self.lineEdit_6.text()), float(self.lineEdit_7.text()),
+                    float(self.lineEdit_8.text())]
+            for i in range(7):
+                vals[i].append(data[i])
+            check = True
+        except ValueError:
+            print("err")
+            check = False
+        if check:
+            y_arr = []
+            for i in range(7):
+                for j in range(len(df['uos'].tolist())):
+                    y_arr.append((vals[i][j] - min(vals[i])) / (max(vals[i]) - min(vals[i])))
+                vals[i] = y_arr
+                y_arr = []
+            resX = []
+            temp = []
+            for i in range(len(df['uos'].tolist())):
+                for j in range(7):
+                    temp.append(vals[j][i])
+                resX.append(temp)
+                temp = []
+            if main.runHand(data)[0] == 1:
+                result = f"Болен {main.runHand(data)[1]}"
+            else:
+                result = f"Не болен {main.runHand(data)[1]}"
+        self.textBrowser_2.setHtml(
+            "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+            "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+            "p, li { white-space: pre-wrap; }\n"
+            "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+            f"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:16pt;\">{result}</span></p></body></html>")
+
     def loadData(self):
-        data = main.X
+        data = main.resX
         ind = 0
         try:
-            ind = int(self.lineEdit_4.text()) - 1
+            ind = int(self.lineEdit_4.text())
             check = True
         except ValueError:
             check = False
@@ -37,17 +82,17 @@ class Ui_MainWindow(object):
             self.lineEdit_8.setText('')
             result = ""
         else:
-            self.lineEdit.setText(str(data[ind][0]))
-            self.lineEdit_2.setText(str(data[ind][1]))
-            self.lineEdit_3.setText(str(data[ind][2]))
-            self.lineEdit_5.setText(str(data[ind][3]))
-            self.lineEdit_6.setText(str(data[ind][4]))
-            self.lineEdit_7.setText(str(data[ind][5]))
-            self.lineEdit_8.setText(str(data[ind][6]))
-            if main.run(ind) == 1:
-                result = "Болен"
+            self.lineEdit.setText(str(vals[0][ind]))
+            self.lineEdit_2.setText(str(vals[1][ind]))
+            self.lineEdit_3.setText(str(vals[2][ind]))
+            self.lineEdit_5.setText(str(vals[3][ind]))
+            self.lineEdit_6.setText(str(vals[4][ind]))
+            self.lineEdit_7.setText(str(vals[5][ind]))
+            self.lineEdit_8.setText(str(vals[6][ind]))
+            if main.run(ind)[0] == 1:
+                result = f"Болен {main.run(ind)[1]}"
             else:
-                result = "Не болен"
+                result = f"Не болен {main.run(ind)[1]}"
         self.textBrowser_2.setHtml("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
                                                   "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
                                                   "p, li { white-space: pre-wrap; }\n"
@@ -130,6 +175,10 @@ class Ui_MainWindow(object):
         self.lineEdit_8.setMaximumSize(QtCore.QSize(16777215, 30))
         self.lineEdit_8.setObjectName("lineEdit_8")
         self.verticalLayout.addWidget(self.lineEdit_8)
+        self.but = QtWidgets.QPushButton(self.verticalLayoutWidget)
+        self.but.setObjectName("but")
+        self.but.setText("Пуск")
+        self.verticalLayout.addWidget(self.but)
         self.verticalLayoutWidget_2 = QtWidgets.QWidget(self.centralwidget)
         self.verticalLayoutWidget_2.setGeometry(QtCore.QRect(290, 10, 201, 431))
         self.verticalLayoutWidget_2.setObjectName("verticalLayoutWidget_2")
