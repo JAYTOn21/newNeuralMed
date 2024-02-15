@@ -5,9 +5,9 @@ import pandas as pd
 
 import main
 
-df = pd.read_excel('dataneed.xlsx', dtype=float).round(5)
-vals = [df['uos'].tolist(), df['kv'].tolist(), df['upss'].tolist(), df['ilg'].tolist(), df['islm'].tolist(),
-        df['isnm'].tolist(), df['liir'].tolist()]
+df = pd.read_excel('newData.xlsx', dtype=float).round(5)
+vals = [df['imt'].tolist(), df['choles'].tolist(), df['HDL'].tolist(), df['LDL'].tolist(), df['trigl'].tolist(),
+        df['ather'].tolist()]
 
 class Ui_MainWindow(object):
     def trainTime(self, num):
@@ -26,14 +26,14 @@ class Ui_MainWindow(object):
 
     def loadDataHand(self):
         df = pd.read_excel('dataneed.xlsx', dtype=float).round(5)
-        vals = [df['uos'].tolist(), df['kv'].tolist(), df['upss'].tolist(), df['ilg'].tolist(), df['islm'].tolist(),
-                df['isnm'].tolist(), df['liir'].tolist()]
+        vals = [df['imt'].tolist(), df['choles'].tolist(), df['HDL'].tolist(), df['LDL'].tolist(), df['trigl'].tolist(),
+                df['ather'].tolist()]
         data = []
         try:
             data = [float(self.lineEdit.text()), float(self.lineEdit_2.text()), float(self.lineEdit_3.text()),
                     float(self.lineEdit_5.text()), float(self.lineEdit_6.text()), float(self.lineEdit_7.text()),
                     float(self.lineEdit_8.text())]
-            for i in range(7):
+            for i in range(6):
                 vals[i].append(data[i])
             check = True
         except ValueError:
@@ -41,15 +41,15 @@ class Ui_MainWindow(object):
             check = False
         if check:
             y_arr = []
-            for i in range(7):
-                for j in range(len(df['uos'].tolist())):
+            for i in range(6):
+                for j in range(len(df['imt'].tolist())):
                     y_arr.append((vals[i][j] - min(vals[i])) / (max(vals[i]) - min(vals[i])))
                 vals[i] = y_arr
                 y_arr = []
             resX = []
             temp = []
-            for i in range(len(df['uos'].tolist())):
-                for j in range(7):
+            for i in range(len(df['imt'].tolist())):
+                for j in range(6):
                     temp.append(vals[j][i])
                 resX.append(temp)
                 temp = []
@@ -88,7 +88,6 @@ class Ui_MainWindow(object):
             self.lineEdit_5.setText(str(vals[3][ind]))
             self.lineEdit_6.setText(str(vals[4][ind]))
             self.lineEdit_7.setText(str(vals[5][ind]))
-            self.lineEdit_8.setText(str(vals[6][ind]))
             if main.run(ind)[0] == 1:
                 result = f"Болен {main.run(ind)[1]}"
             else:

@@ -108,7 +108,7 @@ class Network:
 
 
 def reading():
-    df = pd.read_excel('dataneed.xlsx', dtype=float).round(5)
+    df = pd.read_excel('newData.xlsx', dtype=float).round(5)
 
     temp = []
     resX = []
@@ -118,17 +118,17 @@ def reading():
 
     y_arr = []
 
-    vals = [df['uos'].tolist(), df['kv'].tolist(), df['upss'].tolist(), df['ilg'].tolist(), df['islm'].tolist(),
-            df['isnm'].tolist(), df['liir'].tolist()]
+    vals = [df['imt'].tolist(), df['choles'].tolist(), df['HDL'].tolist(), df['LDL'].tolist(), df['trigl'].tolist(),
+            df['ather'].tolist()]
 
-    for i in range(7):
-        for j in range(len(df['uos'].tolist())):
+    for i in range(6):
+        for j in range(len(df['imt'].tolist())):
             y_arr.append((vals[i][j] - min(vals[i])) / (max(vals[i]) - min(vals[i])))
         vals[i] = y_arr
         y_arr = []
 
-    for i in range(len(df['uos'].tolist())):
-        for j in range(7):
+    for i in range(len(df['imt'].tolist())):
+        for j in range(6):
             temp.append(vals[j][i])
         resX.append(temp)
         temp = []
@@ -145,7 +145,7 @@ def reading():
     return X, Y, resX
 
 
-net = Network([7, 7, 7, 1])
+net = Network([6, 6, 6, 1])
 X, Y, resX = reading()
 
 
