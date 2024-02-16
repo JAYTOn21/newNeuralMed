@@ -2,6 +2,9 @@ import math
 import pandas as pd
 import numpy as np
 import time
+import random
+from Settings import NS, alpha, eps, epochs, ActFun
+
 
 
 class Network:
@@ -40,12 +43,13 @@ class Network:
 
                 # активация с помощью сигмоидальной функции
 
-                self.z[k][i] = 1 / (1 + math.exp(-y))
-                self.df[k][i] = self.z[k][i] * (1 - self.z[k][i])
+                if ActFun == 0:
+                    self.z[k][i] = 1 / (1 + math.exp(-y))
+                    self.df[k][i] = self.z[k][i] * (1 - self.z[k][i])
 
-                # активация с помощью гиперболического тангенса
-                # self.z[k][i] = math.tanh(y)
-                # self.df[k][i] = 1 - pow(self.z[k][i], 2)
+                elif ActFun == 1:
+                    self.z[k][i] = math.tanh(y)
+                    self.df[k][i] = 1 - pow(self.z[k][i], 2)
 
                 # активация с помощью ReLU
                 # L[k].z[i] = y > 0 ? y: 0;
@@ -145,13 +149,13 @@ def reading():
     return X, Y, resX
 
 
-net = Network([6, 6, 6, 1])
+net = Network(NS)
 X, Y, resX = reading()
 
 
 def train():
     timing = time.time()
-    net.Train(X, Y, 0.5, 0.000000001, 1000)
+    net.Train(X, Y, alpha, eps, epochs)
     return (time.time() - timing).__round__(3)
 
 
@@ -173,3 +177,11 @@ def runHand(inpX):
         return 1, (output[0] * 100).round(2)
     else:
         return 0, (output[0] * 100).round(2)
+
+def testRun():
+    lastErr = net.errDF['error'][len(net.errDF)-1]
+    weights = net.weights
+    id = random.randint(1, 100000000)
+    testFile = open(f'{NS} ActFun = {ActFun} {id}.txt', "a+")
+    testFile.write(f'error: {lastErr} \n weigths: {weights} \n {alpha}, \n {eps}, \n {epochs}')
+    print("success")

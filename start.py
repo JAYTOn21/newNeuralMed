@@ -31,12 +31,15 @@ class MainWindow:
         self.ui.trainTime(main.train())
 
 
+
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     # app.setWindowIcon(QtGui.QIcon('MR.png'))
     main_win = MainWindow()
     main_win.train()
-    main_win.show()
+    # main_win.show()
     main_win.graphSet()
     main_win.ui.loadData()
-    sys.exit(app.exec_())
+    main.testRun()
+    sys.exit()
+
