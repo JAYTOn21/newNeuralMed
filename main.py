@@ -6,7 +6,6 @@ import random
 from Settings import NS, alpha, eps, epochs, ActFun
 
 
-
 class Network:
     weights = []  # матрицы весов слоя
     x = []  # вход слоя
@@ -178,9 +177,10 @@ def runHand(inpX):
     else:
         return 0, (output[0] * 100).round(2)
 
-def testRun():
-    lastErr = net.errDF['error'][len(net.errDF)-1]
-    weights = net.weights
+
+def testRun(net2):
+    lastErr = net2.errDF['error'][len(net2.errDF) - 1]
+    weights = net2.weights
     id = random.randint(1, 100000000)
     testFile = open(f'{NS} ActFun = {ActFun} {id}.txt', "a+")
     testFile.write(f'error: {lastErr} \n weigths: {weights} \n {alpha}, \n {eps}, \n {epochs}')
