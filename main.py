@@ -6,6 +6,63 @@ import random
 from Settings import NS, alpha, eps, epochs, ActFun
 
 
+class NetworkTrained:
+    weights = []  # матрицы весов слоя
+    x = []  # вход слоя
+    z = []  # активированный выход слоя
+    df = []  # производная функции активации слоя
+    deltas = []  # дельты ошибки на каждом слое
+
+    layersN = 0  # число слоёв
+
+    def __init__(self, sizes):
+        self.layersN = len(sizes) - 1  # запоминаем число слоёв
+        self.errDF = pd.read_csv("df 33351071.csv")
+        f = open('[6, 6, 1] ActFun = 1 33351071.txt')
+        fData = f.read().replace('\n        ', ' ').replace('\n       ', ' ')
+        fData = fData.split('$')
+        print(fData)
+        weightsTemp = fData[3]
+        print(type(weightsTemp))
+        for i in range(1, len(sizes)):
+
+            self.weights.append(np.random.rand(sizes[i], sizes[i - 1]))  # создаём матрицу весовых коэффициентов
+            self.x.append(np.zeros(sizes[i - 1]))  # создаём вектор для входа слоя
+            self.z.append(np.zeros(sizes[i]))  # создаём вектор для выхода слоя
+            self.df.append(np.zeros(sizes[i]))  # создаём вектор для производной слоя
+            self.deltas.append(np.zeros(sizes[i]))  # создаём вектор для дельт
+
+    def feedForward(self, inputVals):
+        for k in range(self.layersN):
+            if k == 0:
+                for i in range(len(inputVals)):
+                    self.x[k][i] = inputVals[i]
+            else:
+                for i in range(len(self.z[k - 1])):
+                    self.x[k][i] = self.z[k - 1][i]
+            for i in range(len(self.weights[k])):
+                y = 0.0
+
+                for j in range(len(self.weights[k][0])):
+                    y += self.weights[k][i][j] * self.x[k][j]
+
+                # активация с помощью сигмоидальной функции
+
+                if ActFun == 0:
+                    self.z[k][i] = 1 / (1 + math.exp(-y))
+                    self.df[k][i] = self.z[k][i] * (1 - self.z[k][i])
+
+                elif ActFun == 1:
+                    self.z[k][i] = math.tanh(y)
+                    self.df[k][i] = 1 - pow(self.z[k][i], 2)
+
+                # активация с помощью ReLU
+                # L[k].z[i] = y > 0 ? y: 0;
+                # L[k].df[i] = y > 0 ? 1: 0;
+
+        return self.z[self.layersN - 1]
+
+
 class Network:
     weights = []  # матрицы весов слоя
     x = []  # вход слоя
@@ -170,12 +227,12 @@ def run(num):
         return 0, (output[0] * 100).round(2)
 
 
-def runHand(inpX):
-    output = net.feedForward(inpX)
-    if (output[0] * 100).round(2) >= 90.0:
-        return 1, (output[0] * 100).round(2)
-    else:
-        return 0, (output[0] * 100).round(2)
+# def runHand(inpX):
+#     output = net.feedForward(inpX)
+#     if (output[0] * 100).round(2) >= 90.0:
+#         return 1, (output[0] * 100).round(2)
+#     else:
+#         return 0, (output[0] * 100).round(2)
 
 
 def testRun(net2):
@@ -184,4 +241,14 @@ def testRun(net2):
     id = random.randint(1, 100000000)
     testFile = open(f'{NS} ActFun = {ActFun} {id}.txt', "a+")
     testFile.write(f'error: {lastErr} \n weigths: {weights} \n {alpha}, \n {eps}, \n {epochs}')
+    print("success")
+
+
+def runForBoot(net2):
+    lastErr = net2.errDF['error'][len(net2.errDF) - 1]
+    weights = net2.weights
+    id = random.randint(1, 100000000)
+    testFile = open(f'{NS} ActFun = {ActFun} {id}.txt', "a+")
+    testFile.write(f'lastErr:${lastErr}$Weights:${weights}$x:${net2.x}$z:${net2.z}$df:${net2.df}')
+    net2.errDF.to_csv(f'df {id}.csv', index=False)
     print("success")
