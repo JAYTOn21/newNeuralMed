@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import time
 import random
+import csv
 from Settings import NS, alpha, eps, epochs, ActFun
 
 
@@ -249,6 +250,9 @@ def runForBoot(net2):
     weights = net2.weights
     id = random.randint(1, 100000000)
     testFile = open(f'{NS} ActFun = {ActFun} {id}.txt', "a+")
+    with open("weights.csv", "w+") as my_csv:
+        newWeights = csv.writer(my_csv, delimiter=',')
+        newWeights.writerows(weights)
     testFile.write(f'lastErr:${lastErr}$Weights:${weights}$x:${net2.x}$z:${net2.z}$df:${net2.df}')
     net2.errDF.to_csv(f'df {id}.csv', index=False)
     print("success")
