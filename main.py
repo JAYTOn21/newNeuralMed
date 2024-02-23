@@ -18,7 +18,7 @@ class NetworkTrained:
 
     def __init__(self, sizes):
         self.layersN = len(sizes) - 1  # запоминаем число слоёв
-        pathDir = "[6, 6, 6, 1] ActFun = 0 94468875"
+        pathDir = "[6, 6, 6, 6, 1] ActFun = 0 36256833"
         self.errDF = pd.read_csv(f"{pathDir}/errDF.csv")
         weightsFile = open(f'{pathDir}/weights.csv')
         weightsReader = csv.reader(weightsFile, delimiter=',')
@@ -36,7 +36,6 @@ class NetworkTrained:
                     iFloat = np.asarray(iStr, dtype=float)
                     tmpArr.append(iFloat)
                 self.weights.append(tmpArr)
-        # print(self.weights)
         xFile = open(f'{pathDir}/x.csv')
         xReader = csv.reader(xFile, delimiter=',')
         for row in xReader:
@@ -77,10 +76,9 @@ class NetworkTrained:
                 elif ActFun == 1:
                     self.z[k][i] = math.tanh(y)
                     self.df[k][i] = 1 - pow(self.z[k][i], 2)
-
-                # активация с помощью ReLU
-                # L[k].z[i] = y > 0 ? y: 0;
-                # L[k].df[i] = y > 0 ? 1: 0;
+                elif ActFun == 2:
+                    self.z[k][i] = y if y > 0 else 0
+                    self.df[k][i] = 1 if y > 0 else 0
 
         return self.z[self.layersN - 1]
 
@@ -119,19 +117,15 @@ class Network:
                 for j in range(len(self.weights[k][0])):
                     y += self.weights[k][i][j] * self.x[k][j]
 
-                # активация с помощью сигмоидальной функции
-
                 if ActFun == 0:
                     self.z[k][i] = 1 / (1 + math.exp(-y))
                     self.df[k][i] = self.z[k][i] * (1 - self.z[k][i])
-
                 elif ActFun == 1:
                     self.z[k][i] = math.tanh(y)
                     self.df[k][i] = 1 - pow(self.z[k][i], 2)
-
-                # активация с помощью ReLU
-                # L[k].z[i] = y > 0 ? y: 0;
-                # L[k].df[i] = y > 0 ? 1: 0;
+                elif ActFun == 2:
+                    self.z[k][i] = y if y > 0 else 0
+                    self.df[k][i] = 1 if y > 0 else 0
 
         return self.z[self.layersN - 1]
 
