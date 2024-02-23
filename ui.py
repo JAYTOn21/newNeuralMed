@@ -2,7 +2,7 @@ import plotly.express as px
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 import pandas as pd
-
+import Settings
 import main
 
 df = pd.read_excel('newData.xlsx', dtype=float).round(5)
@@ -11,6 +11,10 @@ vals = [df['imt'].tolist(), df['choles'].tolist(), df['HDL'].tolist(), df['LDL']
 
 
 class Ui_MainWindow(object):
+
+    net = main.NetworkTrained(Settings.NS)
+    X, Y, resX = main.reading()
+
     def trainTime(self, num):
         self.textEdit.setHtml(
             ("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
@@ -20,7 +24,7 @@ class Ui_MainWindow(object):
              f"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">Время обучения нейронной сети: {num.__round__(3)} сек. </span></p></body></html>"))
 
     def graphSet(self):
-        df = main.result()
+        df = main.result(self.net)
         fig = px.line(df, x="epoch", y="error")
         fig.update_layout(margin=dict(l=20, r=20, t=20, b=20))
         self.graphicsView.setHtml(fig.to_html(include_plotlyjs='cdn'))
@@ -66,7 +70,7 @@ class Ui_MainWindow(object):
     #         f"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:16pt;\">{result}</span></p></body></html>")
 
     def loadData(self):
-        data = main.resX
+        data = self.resX
         ind = 0
         try:
             ind = int(self.lineEdit_4.text())
@@ -89,10 +93,12 @@ class Ui_MainWindow(object):
             self.lineEdit_5.setText(str(vals[3][ind]))
             self.lineEdit_6.setText(str(vals[4][ind]))
             self.lineEdit_7.setText(str(vals[5][ind]))
-            if main.run(ind)[0] == 1:
-                result = f"Болен {main.run(ind)[1]}"
+
+            if main.run(ind, self.net, self.resX)[0] == 1:
+                result = f"Болен {main.run(ind, self.net, self.resX)[1]}"
             else:
-                result = f"Не болен {main.run(ind)[1]}"
+                result = f"Не болен {main.run(ind, self.net, self.resX)[1]}"
+
         self.textBrowser_2.setHtml(
             "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
             "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"

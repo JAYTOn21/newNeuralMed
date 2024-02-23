@@ -27,8 +27,8 @@ class MainWindow:
     def show(self):
         self.main_win.show()
 
-    def train(self):
-        self.ui.trainTime(main.train())
+    # def train(self):
+    #     self.ui.trainTime(main.train())
 
 
 if __name__ == "__main__":
@@ -39,4 +39,4 @@ if __name__ == "__main__":
     main_win.show()
     main_win.graphSet()
     main_win.ui.loadData()
-    sys.exit()
+    sys.exit(app.exec_())

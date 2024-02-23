@@ -4,6 +4,7 @@ import numpy as np
 import time
 import random
 import csv
+import os
 from Settings import NS, alpha, eps, epochs, ActFun
 
 
@@ -12,26 +13,48 @@ class NetworkTrained:
     x = []  # вход слоя
     z = []  # активированный выход слоя
     df = []  # производная функции активации слоя
-    deltas = []  # дельты ошибки на каждом слое
 
     layersN = 0  # число слоёв
 
     def __init__(self, sizes):
         self.layersN = len(sizes) - 1  # запоминаем число слоёв
-        self.errDF = pd.read_csv("df 33351071.csv")
-        f = open('[6, 6, 1] ActFun = 1 33351071.txt')
-        fData = f.read().replace('\n        ', ' ').replace('\n       ', ' ')
-        fData = fData.split('$')
-        print(fData)
-        weightsTemp = fData[3]
-        print(type(weightsTemp))
-        for i in range(1, len(sizes)):
-
-            self.weights.append(np.random.rand(sizes[i], sizes[i - 1]))  # создаём матрицу весовых коэффициентов
-            self.x.append(np.zeros(sizes[i - 1]))  # создаём вектор для входа слоя
-            self.z.append(np.zeros(sizes[i]))  # создаём вектор для выхода слоя
-            self.df.append(np.zeros(sizes[i]))  # создаём вектор для производной слоя
-            self.deltas.append(np.zeros(sizes[i]))  # создаём вектор для дельт
+        pathDir = "[6, 6, 6, 1] ActFun = 0 94468875"
+        self.errDF = pd.read_csv(f"{pathDir}/errDF.csv")
+        weightsFile = open(f'{pathDir}/weights.csv')
+        weightsReader = csv.reader(weightsFile, delimiter=',')
+        for row in weightsReader:
+            if row:
+                tmpArr = []
+                for i in row:
+                    while '  ' in i:
+                        i = i.replace('  ', ' ')
+                    if i[1] == ' ':
+                        i = i[:1] + i[2:]
+                    if i[len(i) - 2] == ' ':
+                        i = i[:len(i) - 2] + i[len(i) - 1:]
+                    iStr = i.replace('[', '').replace(']', '').split(' ')
+                    iFloat = np.asarray(iStr, dtype=float)
+                    tmpArr.append(iFloat)
+                self.weights.append(tmpArr)
+        # print(self.weights)
+        xFile = open(f'{pathDir}/x.csv')
+        xReader = csv.reader(xFile, delimiter=',')
+        for row in xReader:
+            if row:
+                row = np.asarray(row, dtype=float)
+                self.x.append(row)
+        zFile = open(f'{pathDir}/z.csv')
+        zReader = csv.reader(zFile, delimiter=',')
+        for row in zReader:
+            if row:
+                row = np.asarray(row, dtype=float)
+                self.z.append(row)
+        dfFile = open(f'{pathDir}/df.csv')
+        dfReader = csv.reader(dfFile, delimiter=',')
+        for row in dfReader:
+            if row:
+                row = np.asarray(row, dtype=float)
+                self.df.append(row)
 
     def feedForward(self, inputVals):
         for k in range(self.layersN):
@@ -46,8 +69,6 @@ class NetworkTrained:
 
                 for j in range(len(self.weights[k][0])):
                     y += self.weights[k][i][j] * self.x[k][j]
-
-                # активация с помощью сигмоидальной функции
 
                 if ActFun == 0:
                     self.z[k][i] = 1 / (1 + math.exp(-y))
@@ -206,21 +227,17 @@ def reading():
     return X, Y, resX
 
 
-net = Network(NS)
-X, Y, resX = reading()
+# def train():
+#     timing = time.time()
+#     net.Train(X, Y, alpha, eps, epochs)
+#     return (time.time() - timing).__round__(3)
 
 
-def train():
-    timing = time.time()
-    net.Train(X, Y, alpha, eps, epochs)
-    return (time.time() - timing).__round__(3)
-
-
-def result():
+def result(net):
     return net.errDF
 
 
-def run(num):
+def run(num, net, resX):
     output = net.feedForward(resX[num])
     if (output[0] * 100).round(2) >= 90.0:
         return 1, (output[0] * 100).round(2)
@@ -246,13 +263,22 @@ def testRun(net2):
 
 
 def runForBoot(net2):
-    lastErr = net2.errDF['error'][len(net2.errDF) - 1]
     weights = net2.weights
     id = random.randint(1, 100000000)
-    testFile = open(f'{NS} ActFun = {ActFun} {id}.txt', "a+")
-    with open("weights.csv", "w+") as my_csv:
+    os.mkdir(f"{NS} ActFun = {ActFun} {id}")
+    with open(f"{NS} ActFun = {ActFun} {id}/weights.csv", "w+") as my_csv:
         newWeights = csv.writer(my_csv, delimiter=',')
         newWeights.writerows(weights)
-    testFile.write(f'lastErr:${lastErr}$Weights:${weights}$x:${net2.x}$z:${net2.z}$df:${net2.df}')
-    net2.errDF.to_csv(f'df {id}.csv', index=False)
-    print("success")
+    with open(f"{NS} ActFun = {ActFun} {id}/x.csv", "w+") as my_csv:
+        newX = csv.writer(my_csv, delimiter=',')
+        newX.writerows(net2.x)
+    with open(f"{NS} ActFun = {ActFun} {id}/z.csv", "w+") as my_csv:
+        newZ = csv.writer(my_csv, delimiter=',')
+        newZ.writerows(net2.z)
+    with open(f"{NS} ActFun = {ActFun} {id}/df.csv", "w+") as my_csv:
+        newDf = csv.writer(my_csv, delimiter=',')
+        newDf.writerows(net2.df)
+    net2.errDF.to_csv(f'{NS} ActFun = {ActFun} {id}/errDF.csv', index=False)
+    testFile = open(f'{NS} ActFun = {ActFun} {id}/{NS} ActFun = {ActFun} {id}.txt', "a+")
+    testFile.write(f'weigths: {weights} \n {alpha}, \n {eps}, \n {epochs}')
+    print(f"{net2.errDF['error'][len(net2.errDF) - 1]}")
