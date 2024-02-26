@@ -5,6 +5,8 @@ import time
 import random
 import csv
 import os
+
+import Settings
 from Settings import NS, alpha, eps, epochs, ActFun
 
 
@@ -18,7 +20,7 @@ class NetworkTrained:
 
     def __init__(self, sizes):
         self.layersN = len(sizes) - 1  # запоминаем число слоёв
-        pathDir = "[6, 6, 6, 6, 1] ActFun = 0 36256833"
+        pathDir = "[6, 6, 6, 6, 1] ActFun = 1 76720037"
         self.errDF = pd.read_csv(f"{pathDir}/errDF.csv")
         weightsFile = open(f'{pathDir}/weights.csv')
         weightsReader = csv.reader(weightsFile, delimiter=',')
@@ -89,7 +91,7 @@ class Network:
     z = []  # активированный выход слоя
     df = []  # производная функции активации слоя
     deltas = []  # дельты ошибки на каждом слое
-
+    errDF = []
     layersN = 0  # число слоёв
 
     def __init__(self, sizes):
@@ -181,6 +183,15 @@ class Network:
             self.errDF = self.errDF._append({'epoch': epoch, 'error': error}, ignore_index=True)
 
             epoch += 1
+
+
+nets = []
+
+
+def createNet(newNS):
+    for i in range(Settings.testCount):
+        nets.append(Network(newNS))
+    return nets
 
 
 def reading():
