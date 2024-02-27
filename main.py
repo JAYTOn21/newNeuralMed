@@ -105,6 +105,9 @@ class Network:
             self.df.append(np.zeros(sizes[i]))  # создаём вектор для производной слоя
             self.deltas.append(np.zeros(sizes[i]))  # создаём вектор для дельт
 
+    def printErrDF(self):
+        print(self.errDF)
+
     def feedForward(self, inputVals):
         for k in range(self.layersN):
             if k == 0:
@@ -185,8 +188,6 @@ class Network:
             epoch += 1
 
 
-nets = []
-
 def reading():
     df = pd.read_excel('newData.xlsx', dtype=float).round(5)
 
@@ -225,10 +226,10 @@ def reading():
     return X, Y, resX
 
 
-# def train():
-#     timing = time.time()
-#     net.Train(X, Y, alpha, eps, epochs)
-#     return (time.time() - timing).__round__(3)
+def train(net, X, Y, alpha, eps, epochs):
+    timing = time.time()
+    net.Train(X, Y, alpha, eps, epochs)
+    print((time.time() - timing).__round__(3))
 
 
 def result(net):
