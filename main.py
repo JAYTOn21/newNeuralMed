@@ -5,7 +5,7 @@ import time
 import random
 import csv
 import os
-from Settings import NS, alpha, eps, epochs, ActFun
+from Settings import NS, alpha, eps, epochs, ActFun, path
 
 
 class NetworkTrained:
@@ -18,7 +18,7 @@ class NetworkTrained:
 
     def __init__(self, sizes):
         self.layersN = len(sizes) - 1  # запоминаем число слоёв
-        pathDir = "[6, 6, 1] ActFun = 0 49843232"
+        pathDir = path
         self.errDF = pd.read_csv(f"{pathDir}/errDF.csv")
         weightsFile = open(f'{pathDir}/weights.csv')
         weightsReader = csv.reader(weightsFile, delimiter=',')
@@ -262,20 +262,20 @@ def testRun(net2):
 def runForBoot(net2):
     weights = net2.weights
     id = random.randint(1, 100000000)
-    os.mkdir(f"{NS} ActFun = {ActFun} {id}")
-    with open(f"{NS} ActFun = {ActFun} {id}/weights.csv", "w+") as my_csv:
+    os.mkdir(f"[6, 6^100, 1] ActFun = {ActFun} {id}")
+    with open(f"[6, 6^100, 1] ActFun = {ActFun} {id}/weights.csv", "w+") as my_csv:
         newWeights = csv.writer(my_csv, delimiter=',')
         newWeights.writerows(weights)
-    with open(f"{NS} ActFun = {ActFun} {id}/x.csv", "w+") as my_csv:
+    with open(f"[6, 6^100, 1] ActFun = {ActFun} {id}/x.csv", "w+") as my_csv:
         newX = csv.writer(my_csv, delimiter=',')
         newX.writerows(net2.x)
-    with open(f"{NS} ActFun = {ActFun} {id}/z.csv", "w+") as my_csv:
+    with open(f"[6, 6^100, 1] ActFun = {ActFun} {id}/z.csv", "w+") as my_csv:
         newZ = csv.writer(my_csv, delimiter=',')
         newZ.writerows(net2.z)
-    with open(f"{NS} ActFun = {ActFun} {id}/df.csv", "w+") as my_csv:
+    with open(f"[6, 6^100, 1] ActFun = {ActFun} {id}/df.csv", "w+") as my_csv:
         newDf = csv.writer(my_csv, delimiter=',')
         newDf.writerows(net2.df)
-    net2.errDF.to_csv(f'{NS} ActFun = {ActFun} {id}/errDF.csv', index=False)
-    testFile = open(f'{NS} ActFun = {ActFun} {id}/{NS} ActFun = {ActFun} {id}.txt', "a+")
+    net2.errDF.to_csv(f'[6, 6^100, 1] ActFun = {ActFun} {id}/errDF.csv', index=False)
+    testFile = open(f'[6, 6^100, 1] ActFun = {ActFun} {id}/[6, 6^100, 1] ActFun = {ActFun} {id}.txt', "a+")
     testFile.write(f'weigths: {weights} \n {alpha}, \n {eps}, \n {epochs}')
     print(f"{net2.errDF['error'][len(net2.errDF) - 1]}")
