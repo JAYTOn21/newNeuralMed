@@ -84,7 +84,6 @@ class Ui_MainWindow(object):
             self.lineEdit_5.setText('')
             self.lineEdit_6.setText('')
             self.lineEdit_7.setText('')
-            self.lineEdit_8.setText('')
             result = ""
         else:
             self.lineEdit.setText(str(vals[0][ind]))
@@ -173,18 +172,6 @@ class Ui_MainWindow(object):
         self.lineEdit_7.setMaximumSize(QtCore.QSize(16777215, 30))
         self.lineEdit_7.setObjectName("lineEdit_7")
         self.verticalLayout.addWidget(self.lineEdit_7)
-        self.label_8 = QtWidgets.QLabel(self.verticalLayoutWidget)
-        self.label_8.setObjectName("label_8")
-        self.verticalLayout.addWidget(self.label_8)
-        self.lineEdit_8 = QtWidgets.QLineEdit(self.verticalLayoutWidget)
-        self.lineEdit_8.setMinimumSize(QtCore.QSize(0, 30))
-        self.lineEdit_8.setMaximumSize(QtCore.QSize(16777215, 30))
-        self.lineEdit_8.setObjectName("lineEdit_8")
-        self.verticalLayout.addWidget(self.lineEdit_8)
-        self.but = QtWidgets.QPushButton(self.verticalLayoutWidget)
-        self.but.setObjectName("but")
-        self.but.setText("Пуск")
-        self.verticalLayout.addWidget(self.but)
         self.verticalLayoutWidget_2 = QtWidgets.QWidget(self.centralwidget)
         self.verticalLayoutWidget_2.setGeometry(QtCore.QRect(290, 10, 201, 431))
         self.verticalLayoutWidget_2.setObjectName("verticalLayoutWidget_2")
@@ -214,13 +201,12 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Нейронная сеть"))
         self.label.setText(_translate("MainWindow", "Введите номер"))
-        self.label_2.setText(_translate("MainWindow", "УОС"))
-        self.label_3.setText(_translate("MainWindow", "КВ"))
-        self.label_4.setText(_translate("MainWindow", "УПСС"))
-        self.label_5.setText(_translate("MainWindow", "ИЛГ"))
-        self.label_6.setText(_translate("MainWindow", "ИСЛМ"))
-        self.label_7.setText(_translate("MainWindow", "ИСНМ"))
-        self.label_8.setText(_translate("MainWindow", "ЛИИР"))
+        self.label_2.setText(_translate("MainWindow", "ИМТ"))
+        self.label_3.setText(_translate("MainWindow", "Холестерин"))
+        self.label_4.setText(_translate("MainWindow", "ЛПВП"))
+        self.label_5.setText(_translate("MainWindow", "ЛПНП"))
+        self.label_6.setText(_translate("MainWindow", "Триглицериды"))
+        self.label_7.setText(_translate("MainWindow", "Индекс атерогенности"))
         self.textBrowser.setHtml(_translate("MainWindow",
                                             "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
                                             "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"

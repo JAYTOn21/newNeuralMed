@@ -20,7 +20,7 @@ class NetworkTrained:
 
     def __init__(self, sizes):
         self.layersN = len(sizes) - 1  # запоминаем число слоёв
-        pathDir = "[6, 6, 6, 6, 1] ActFun = 0 65221832"
+        pathDir = "[6, 6, 1] ActFun = 0 49843232"
         self.errDF = pd.read_csv(f"{pathDir}/errDF.csv")
         weightsFile = open(f'{pathDir}/weights.csv')
         weightsReader = csv.reader(weightsFile, delimiter=',')
