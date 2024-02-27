@@ -1,4 +1,4 @@
-config = "[6, 12^50, 1] ActFun = 1 49967322"
+config = "[6, 6^50, 1] ActFun = 0 68896341"
 # Стартовое название конфига
 uniqCode = ""
 for i in range(len(config) - 1, 0, -1):
