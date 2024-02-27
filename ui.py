@@ -2,7 +2,7 @@ import plotly.express as px
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 import pandas as pd
-import Settings
+import SettingsRun
 import main
 
 df = pd.read_excel('newData.xlsx', dtype=float).round(5)
@@ -12,7 +12,7 @@ vals = [df['imt'].tolist(), df['choles'].tolist(), df['HDL'].tolist(), df['LDL']
 
 class Ui_MainWindow(object):
 
-    net = main.NetworkTrained(Settings.NS)
+    net = main.NetworkTrained(SettingsRun.NS)
     X, Y, resX = main.reading()
 
     def trainTime(self, num):

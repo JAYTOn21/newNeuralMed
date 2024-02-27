@@ -1,7 +1,7 @@
 import main
-import Settings
+import SettingsTest
 
-net = main.Network(Settings.NS)
+net = main.Network(SettingsTest.NS)
 X, Y, resX = main.reading()
-main.train(net, X, Y, Settings.alpha, Settings.eps, Settings.epochs)
-main.runForBoot(net)
+main.train(net, X, Y, SettingsTest.alpha, SettingsTest.eps, SettingsTest.epochs)
+main.testRun(net)
