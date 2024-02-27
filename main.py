@@ -20,7 +20,7 @@ class NetworkTrained:
 
     def __init__(self, sizes):
         self.layersN = len(sizes) - 1  # запоминаем число слоёв
-        pathDir = "[6, 6, 6, 6, 1] ActFun = 1 76720037"
+        pathDir = "[6, 6, 6, 6, 1] ActFun = 0 65221832"
         self.errDF = pd.read_csv(f"{pathDir}/errDF.csv")
         weightsFile = open(f'{pathDir}/weights.csv')
         weightsReader = csv.reader(weightsFile, delimiter=',')
@@ -186,13 +186,6 @@ class Network:
 
 
 nets = []
-
-
-def createNet(newNS):
-    for i in range(Settings.testCount):
-        nets.append(Network(newNS))
-    return nets
-
 
 def reading():
     df = pd.read_excel('newData.xlsx', dtype=float).round(5)
