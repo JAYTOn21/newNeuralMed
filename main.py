@@ -5,8 +5,6 @@ import time
 import random
 import csv
 import os
-
-import Settings
 from Settings import NS, alpha, eps, epochs, ActFun
 
 
