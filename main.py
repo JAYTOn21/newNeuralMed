@@ -231,7 +231,6 @@ def result(net):
 
 def run(num, net, resX):
     output = net.feedForward(resX[num])
-    print(1)
     if (output[0] * 100).round(2) >= 90.0:
         return 1, (output[0] * 100).round(2)
     else:
@@ -249,20 +248,23 @@ def run(num, net, resX):
 def testRun(net2):
     weights = net2.weights
     id = random.randint(1, 100000000)
-    os.mkdir(f"[6, 12^100, 1] ActFun = {SettingsTest.ActFun} {id}")
-    with open(f"[6, 12^100, 1] ActFun = {SettingsTest.ActFun} {id}/weights.csv", "w+") as my_csv:
+    NSCount = len(SettingsTest.NS) - 3
+    NSInType = SettingsTest.NS[1]
+    os.mkdir(f"[6, {NSInType}^{NSCount}, 1] ActFun = {SettingsTest.ActFun} {id}")
+    with open(f"[6, {NSInType}^{NSCount}, 1] ActFun = {SettingsTest.ActFun} {id}/weights.csv", "w+") as my_csv:
         newWeights = csv.writer(my_csv, delimiter=',')
         newWeights.writerows(weights)
-    with open(f"[6, 12^100, 1] ActFun = {SettingsTest.ActFun} {id}/x.csv", "w+") as my_csv:
+    with open(f"[6, {NSInType}^{NSCount}, 1] ActFun = {SettingsTest.ActFun} {id}/x.csv", "w+") as my_csv:
         newX = csv.writer(my_csv, delimiter=',')
         newX.writerows(net2.x)
-    with open(f"[6, 12^100, 1] ActFun = {SettingsTest.ActFun} {id}/z.csv", "w+") as my_csv:
+    with open(f"[6, {NSInType}^{NSCount}, 1] ActFun = {SettingsTest.ActFun} {id}/z.csv", "w+") as my_csv:
         newZ = csv.writer(my_csv, delimiter=',')
         newZ.writerows(net2.z)
-    with open(f"[6, 12^100, 1] ActFun = {SettingsTest.ActFun} {id}/df.csv", "w+") as my_csv:
+    with open(f"[6, {NSInType}^{NSCount}, 1] ActFun = {SettingsTest.ActFun} {id}/df.csv", "w+") as my_csv:
         newDf = csv.writer(my_csv, delimiter=',')
         newDf.writerows(net2.df)
-    net2.errDF.to_csv(f'[6, 12^100, 1] ActFun = {SettingsTest.ActFun} {id}/errDF.csv', index=False)
-    testFile = open(f'[6, 12^100, 1] ActFun = {SettingsTest.ActFun} {id}/[6, 12^100, 1] ActFun = {SettingsTest.ActFun} {id}.txt', "a+")
+    net2.errDF.to_csv(f'[6, {NSInType}^{NSCount}, 1] ActFun = {SettingsTest.ActFun} {id}/errDF.csv', index=False)
+    testFile = open(f'[6, {NSInType}^{NSCount}, 1] ActFun = {SettingsTest.ActFun} {id}/[6, {NSInType}^{NSCount}, 1] '
+                    f'ActFun = {SettingsTest.ActFun} {id}.txt', "a+")
     testFile.write(f'weigths: {weights} \n {SettingsTest.alpha}, \n {SettingsTest.eps}, \n {SettingsTest.epochs}')
     print(f"{net2.errDF['error'][len(net2.errDF) - 1]}")
